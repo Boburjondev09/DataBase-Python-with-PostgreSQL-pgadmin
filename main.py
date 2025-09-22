@@ -1,11 +1,10 @@
-<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base
 
 from sqlalchemy.orm import sessionmaker
-=======
+
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.params import Depends
@@ -18,12 +17,12 @@ import database
 import schematics
 import crud
 import ml_model
->>>>>>> 53abd16 (DataBase bilan machine learning orqali data analyze uchun neural engine train qilish uchun ishlatilyapti)
+
 
 DATABASE_URL = "postgresql://postgres:your_password@localhost:5432/fastapitest"
 
 engine = create_engine(DATABASE_URL)
-<<<<<<< HEAD
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -64,7 +63,7 @@ def create_item(item: ItemCreate):
     db.refresh(new_item)
     db.close()
     return new_item
-=======
+
 
 app = FastAPI()
 
@@ -95,4 +94,4 @@ def predict_name_length(user_id: int):
     model,_ = ml_model.train_model(df)
     prediction = ml_model.predict(model, pd.DataFrame([[user_id]], columns=['id']))
     return {"predicted_length": int(prediction[0])}
->>>>>>> 53abd16 (DataBase bilan machine learning orqali data analyze uchun neural engine train qilish uchun ishlatilyapti)
+
