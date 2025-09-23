@@ -3,5 +3,10 @@ __pycache__/
 .idea/
 *.pyc
 test.db
+<<<<<<< HEAD
 git config --local user.name "Bobur Boynazarov"
 git config --local user.email "boynazarovbobur555@gmail.com"
+=======
+#git config --local user.name "Bobur Boynazarov"
+#git config --local user.email "boynazarovbobur555@gmail.com"
+>>>>>>> 53abd16 (DataBase bilan machine learning orqali data analyze uchun neural engine train qilish uchun ishlatilyapti)
