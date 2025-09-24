@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 import pandas as pd
 import database
-import schematics
+import schemas
 import crud
 import ml_model
 from sqlalchemy import create_engine
@@ -18,9 +18,9 @@ def get_db():
         db.close()
 
 
-@app.post("/users/", response_model=schematics.UserRead)
-def create_user_endpoint(user: schematics.UserCreate, db: Session = Depends(get_db)):
-    return crud.create_user(db, user)
+@app.post("/users/", response_model=schemas.UserItemRead)
+def create_user_item_endpoint(user: schemas.UserItemCreate, db: Session = Depends(get_db)):
+    return crud.create_useritem(db, user)
 
 
 @app.get("/train")
