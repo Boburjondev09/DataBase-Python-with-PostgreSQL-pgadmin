@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String
 from database import Base
 
-class UserItem(Base):
-    __tablename__ = "user_items"
-    __table_args__ = {'extend_existing': True}
+class Employees(Base):
+    __tablename__ = "employees"
+    __table_args__ = {"extend_existing": True}
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_name = Column(String, index=True, nullable=False)
-    user_surname = Column(String, index=True, nullable=False)
-    item_name = Column(String, index=True, nullable=False)
-    item_description = Column(Text)
+    employee_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    employee_name = Column(String(100), nullable=False, index=True)
+    employee_age = Column(Integer, nullable=False)
+    employee_degree = Column(Integer, nullable=False)
+    employee_experience = Column(Integer, nullable=True)
+    department_id = Column(Integer, nullable=False)
