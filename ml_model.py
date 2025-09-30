@@ -1,40 +1,75 @@
-import pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-import joblib
 import os
+import pandas as pd
+import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.impute import SimpleImputer
 
-MODEL_PATH = "linear_model.pkl"
+
+MODEL_PATH = "model.pkl"
+SCALER_PATH = "scaler.pkl"
+IMPUTER_PATH = "imputer.pkl"
+
 
 def prepare_data(df: pd.DataFrame):
-    X = pd.DataFrame()
-    X['id'] = df['id']
-    X['name_length'] = df['name'].apply(len)
-    X['uppercase_count'] = df['name'].apply(lambda x: sum(1 for c in x if c.isupper()))
-    X['space_count'] = df['name'].apply(lambda x: x.count(' '))
-    y = df['name'].apply(len)
+    """
+    Splits DataFrame into features (X) and target (y).
+    For this example, let's predict employee_age.
+    """
+    X = df[["employee_degree", "employee_experience", "department_id"]]
+    y = df["employee_age"]
     return X, y
 
-def train_model(df: pd.DataFrame, test_size=0.2, random_state=42, save_model=True):
+
+def train_model(df: pd.DataFrame):
     X, y = prepare_data(df)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+
+    imputer = SimpleImputer(strategy="mean")
+    X = imputer.fit_transform(X)
+
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
 
     model = LinearRegression()
-    model.fit(X_train, y_train)
+    model.fit(X_train_scaled, y_train)
 
-    y_pred = model.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred)
 
-    if save_model:
-        joblib.dump(model, MODEL_PATH)
+    joblib.dump(model, MODEL_PATH)
+    joblib.dump(scaler, SCALER_PATH)
+    joblib.dump(imputer, IMPUTER_PATH)
 
-    return model, mse
 
-def load_model():
-    if os.path.exists(MODEL_PATH):
-        return joblib.load(MODEL_PATH)
-    return None
+    loss = model.score(X_test_scaled, y_test)
+    return model, loss
 
-def predict(model, X):
-    return model.predict(X)
+
+def load_trained_model():
+    if not (
+        os.path.exists(MODEL_PATH)
+        and os.path.exists(SCALER_PATH)
+        and os.path.exists(IMPUTER_PATH)
+    ):
+        return None, None, None
+    model = joblib.load(MODEL_PATH)
+    scaler = joblib.load(SCALER_PATH)
+    imputer = joblib.load(IMPUTER_PATH)
+    return model, scaler, imputer
+
+
+def predict(model, scaler, imputer, X: pd.DataFrame):
+    """
+    Make predictions with preprocessing (impute + scale).
+    """
+    X_imputed = imputer.transform(X)
+    X_scaled = scaler.transform(X_imputed)
+    return model.predict(X_scaled)
